@@ -1,55 +1,72 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
-<comment>SQL</comment>
 
-<entry key="insertMember">
+	<comment>SQL</comment>
+
+
+	<entry key="createPost">
+
+		INSERT INTO BOARD
+		VALUES
+		(SEQ_BOARD.NEXTVAL,?,?,DEFAULT,?,DEFAULT)
+
+	</entry>
+
+
+	<entry key="modifyPost">
 	
-INSERT INTO MEMBER 
-VALUES(SEQ_USERNO.NEXTVAL,?,?,?,?,?,?,?,?,?,DEFAULT)
-	
-</entry>
-
-<entry key="selectAll">
-SELECT * FROM MEMBER
-
-</entry>
-
-<entry key="slectByUserId">
- SELECT * 
-FROM MEMBER 
-WHERE USERID =?
-</entry>
-
-<entry key="selectByUserName">
-SELECT * 
-FROM MEMBER
-WHERE USERNAME LIKE ?
-
-</entry>
-
-<entry key ="updateMember">
-
- UPDATE MEMBER
- SET USERPWD = ?
-, EMAIL =?
-, PHONE = ?
-, ADDRESS =?
-WHERE USERID = ?
-</entry>
-
-
-<entry key ="deletMember">
-
- UPDATE MEMBER
- SET USERPWD = ?
-, EMAIL =?
-, PHONE = ?
-, ADDRESS =?
-WHERE USERID = ?
-</entry>
+		UPDATE BOARD
+		SET CONTENT = ?
+        WHERE BNO = ?
+	   </entry>
 
 
 
 
-</properties>
+	<entry key="selectAll">
+
+		SELECT * FROM BOARD B , MEMBER M
+		WHERE B.WRITER =M.USERNO
+
+	  </entry>
+
+
+
+	    <entry key="deletePost">
+
+		UPDATE BOARD 
+	    SET DELETE_YN = 'Y'
+	    WHERE BNO = ?
+
+
+	    </entry>
+
+	   <entry key="searForTitle">
+		SELECT * FROM BOARD B , MEMBER M
+		WHERE TITLE LIKE ?
+		AND
+		B.WRITER = M.USERNO
+	   </entry>
+
+
+
+	    <entry key="searchForUser">
+
+		  SELECT * FROM BOARD B , MEMBER M
+          WHERE B.WRITER = M.USERNO 
+          AND DELETE_YN = 'N'
+          AND USERID = ?
+	       </entry>
+	       
+	       
+	       
+	       <entry key="selectDate">
+            SELECT * 
+            FROM BOARD, MEMBER
+			WHERE WRITER = USERNO
+		    AND CREATE_DATE = ?
+	       </entry>
+	        
+	       
+		</properties>
