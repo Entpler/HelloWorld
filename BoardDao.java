@@ -40,7 +40,7 @@ public class BoardDao {
 		ResultSet rset = null;
 		// Board b = new Board();
 		// Member m = new Member();
-		String sql = "SELECT BNO,TITLE,CONTENT,CREATE_DATE,USERID "+"FROM BOARD, MEMBER " + "WHERE WRITER = USERNO";
+		String sql = "SELECT BNO,TITLE,CONTENT,CREATE_DATE,USERID " + "FROM BOARD, MEMBER " + "WHERE WRITER = USERNO";
 
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -116,15 +116,15 @@ public class BoardDao {
 
 		String sql = "SELECT BNO , TITLE, CONTENT, CREATE_DATE, USERID, DELETE_YN " + "FROM BOARD, MEMBER "
 				+ "WHERE EXTRACT(DAY FROM CREATE_DATE) = ? " + "AND WRITER = USERNO";
-	
+
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, dd);
-			rset =pstmt.executeQuery();
+			rset = pstmt.executeQuery();
 
 			while (rset.next()) {
-				b= new Board();
-				m= new Member();
+				b = new Board();
+				m = new Member();
 				b.setBno(rset.getInt("BNO"));
 				b.setTitle(rset.getString("TITLE"));
 				b.setContent(rset.getString("CONTENT"));
@@ -135,7 +135,7 @@ public class BoardDao {
 			}
 
 		} catch (SQLException e) {
-			
+
 			e.printStackTrace();
 		}
 		BoardTemplate.close(rset);
@@ -143,5 +143,52 @@ public class BoardDao {
 
 		return list;
 
+	}
+
+	public int userLogin(Connection conn, String userId, String userPwd) {
+
+		int result = 0;
+		PreparedStatement pstmt = null;
+		ResultSet rset = null;
+		Member m = null;
+		
+
+		String sql = "SELECT USERID, USERPWD " + 
+					 "FROM MEMBER " +  
+					 "WHERE USERID = ? AND USERPWD = ? ";
+
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1,userId);
+			pstmt.setString(2,userPwd);
+			
+			rset = pstmt.executeQuery();
+			
+			if (rset.next()) {
+				m = new Member();
+				m.setUserId(rset.getString("USERID"));
+				m.setUserPwd(rset.getString("USERPWD"));
+				
+			if (rset.getString(1).equals(userId) && (rset.getString(2).equals(userPwd))) 
+				result = 1;
+
+			 else if (rset.getString(1).equals(userId) && !(rset.getString(2).equals(userPwd))) 
+
+				result = 0;
+			
+			else if (!(rset.getString(1).equals(userId)))
+
+				result = -1;
+
+			}
+
+		} catch (SQLException e) {
+
+			e.printStackTrace();
+			BoardTemplate.close(rset);
+			BoardTemplate.close(pstmt);
+		}
+
+		return result;
 	}
 }
