@@ -1,116 +1,93 @@
-package controller;
+package com.kh.controller;
 
-import java.sql.Date;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
-import model.vo.Board;
-import service.BoardService;
-import view.BoardView;
+import com.kh.BoardView;
+import com.kh.common.BoardTemplate;
+import com.kh.model.Board;
+import com.kh.model.BoardDao;
+import com.kh.model.BoardService;
 
 public class BoardController {
-
+	
+	/**
+	 * 
+	 * @param title 게시판의 제목
+	 * @param content 게시판의 내용
+	 * @param writer 작성자 
+	 */
 	public int createPost(String title, String content, String writer) {
-
+		//입력받은 값 가공 해서 board 리턴
 		int result = 0;
-
 		Board b = new Board();
-
 		b.setTitle(title);
 		b.setContent(content);
 		b.setWriter(writer);
-
-		// 데이터 가공 후 Service쪽으로 넘겨주기
-		result = new BoardService().createPost(b);
-
-		if (result > 0) {
-			new BoardView().serviceSuccess("게시글이 입력되었습니다(new)!");
-		} else {
-			new BoardView().serviceFail("게시글이 입력에 실패하였습니다.");
+		
+		result= new BoardService().createPost(b);
+		
+		if(result>0) {
+		new BoardView().processSucess("새로운 게시글이 등록되었습니다.");
+		
+		}else {
+			 new BoardView().processFail("글 올리기에 실패하였습니다.");
 		}
 		return result;
-	}
-
-	public void modifyPost(int bno, String newContent) {
-
-		Board b = new Board();
-		b.setBno(bno);
-		b.setContent(newContent);
-
-		int result = new BoardService().modifyPost(b);
-		if (result > 0) {
-			new BoardView().serviceSuccess("게시글이 수정되었습니다.");
-		} else {
-			new BoardView().serviceFail("게시글 수정에 실패하였습니다.");
-		}
-
-	}
-
-	// SELECT 문. arraylist 로 전체 게시글 보여주기
-	public void selectAll() {
-
-		ArrayList<Board> list = new BoardService().selectAll();
-		if (list.isEmpty()) {
-			new BoardView().serviceFail("게시판이 비어있습니다. 글을 올려주세요.");
-		} else {
-			new BoardView().showListall(list);
-		}
-
-	}
-
-	public void deletePost(int bno) {
-		int result = new BoardService().deltePost(bno);
-		if (result > 0) {
-			new BoardView().serviceSuccess("게시글이 삭제되었습니다.");
-		} else {
-			new BoardView().serviceFail("게시글이 삭제에 실패하였습니다. 다시 시도해주세요");
-		}
-
+		
 	}
 	
+	public ArrayList<Board> selectAll() {
+		
+	ArrayList<Board> list = new ArrayList<>();
+	list = new BoardService().selectAll();
+	if(list.isEmpty()) {
+		new BoardView().processFail("게시판이 비어있습니다.");
+	}else {
+		new BoardView().showList(list);
+	}
+	return list;
+	
+		
+	}
+
 	/**
-	 * 게시판 글 중에 키워드로 검색하는 메소드 ->select문
+	 * 입력받은 글 갯수로 글 보여주기
 	 */
-	public ArrayList<Board> searchForTitle(String keyword) {
+	public ArrayList<Board> searchForTopN(int N) {
 		ArrayList<Board> list = new ArrayList<>();
-	list = new BoardService().searchForTitle(keyword);
+		list=new BoardService().searchForTopN(N);
 		if(list.isEmpty()) {
-		  new BoardView().serviceFail("찾으시는 글이 없습니다.");
+			new BoardView().processFail("최근 올라온 글이 없습니다.");
 		}else {
-			new BoardView().keywordShow(list, keyword);
+			new BoardView().showList(list);
 		}
-		return list;
+		return list; 
 	}
 
-	public ArrayList<Board> searchForUser(String userId) {
-		ArrayList<Board> list = new ArrayList<>();
-		
-		list = new BoardService().searchForUser(userId);
-		
-		
-		if(list.isEmpty()) {
-			new BoardView().serviceFail(userId + "가 작성한 글이 없습니다.");	
-		}else {
-			System.out.println(userId +"가 작성한 글입니다.");
-		    new BoardView().showListall(list);
-		}
-		
-		
-		return list;
-	}
-
-	public ArrayList<Board >selectDate(int writed_date) {
+	public ArrayList<Board> selectDate(String dd) {
 		ArrayList <Board> list= new ArrayList<>();
-		SimpleDateFormat sdf = new SimpleDateFormat("yy" + "/" + "MM" + "/" + writed_date);
-		
-		list= new BoardService().selectDate(writed_date);
-		if(list.isEmpty()) {
-			new BoardView().serviceFail(sdf + "에 작성된 글이 없습니다.");
-			
-		}else {
-			new BoardView().showDate(list);
+		  
+		  String datePattern = "yyyy-MM"; SimpleDateFormat sdf = new
+		  SimpleDateFormat(datePattern); Date day = null; try { day =
+		  (Date)sdf.parse("2022-09"); } catch (ParseException e) { e.printStackTrace();
+		  }
+		 
+		list = new BoardService().selectDate(dd);
+		if (list.isEmpty()) {
+			new BoardView().processFail(sdf.format(day)+dd+"에 작성된 글이 없습니다.");
+		} else {
+			new BoardView().showDate(list,dd);
 		}
 		return list;
 	}
 
 }
+
+
+	
