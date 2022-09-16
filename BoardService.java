@@ -62,7 +62,6 @@ public class BoardService {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return list;
@@ -79,11 +78,17 @@ public class BoardService {
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 				return list;
 			}
+
+	public int userLogin(String userId, String userPwd) {
+		int result = 0;
+		Connection conn=BoardTemplate.getConnection();
+		result = new BoardDao().userLogin(conn,userId,userPwd);
+		return result;
+	}
 		}
 
 		
