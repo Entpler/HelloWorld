@@ -13,15 +13,32 @@ public class BoardView {
 
 	Scanner in = new Scanner(System.in);
 	BoardController bc = new BoardController();
-
+	
+	
+	
+	public void userLogin() {
+		System.out.println("0───────────로그인────────────");
+		System.out.print("아이디를 입력하세요:");
+		
+		String userId = in.nextLine();
+		
+		System.out.print("비밀번호를 입력하세요:");
+		
+		String userPwd = in.nextLine();
+		
+		bc.userLogin(userId, userPwd);
+		
+		}
+	
 	public void mainmenu() {
+	
+		
 
 		while (true) {
-
-			System.out.println("──────────사내게시판──────────");
-		
-			System.out.println("-----------   접속       -----------");
 			
+			System.out.println("──────────자유게시판──────────");
+			
+		
 			System.out.println("1─────────●최신글보기─────────");
 			System.out.println("2─────────●게시글작성──────────");
 			System.out.println("3─────────●게시글수정──────────");
@@ -35,13 +52,18 @@ public class BoardView {
 			int menu = in.nextInt();
 			in.nextLine();
 			switch (menu) {
+			
+			case 0:
+				//userLogin(); 
+				break;
+				
 			case 1:
-				searchFortopN(); // 게시글 작성하기 메소드
+				searchFortopN(); // 최신글 보기
 				break;
 				
 			case 2:
 				createPost();
-				break;// 최신글보기
+				break;// 게시글작성
 			// case 3:
 			// modifyPost(); // 게시글 수정하기 메소드
 			// break;
@@ -66,7 +88,10 @@ public class BoardView {
 			}
 		}
 	}
-
+/**
+ * 
+ */
+	
 	/**
 	 * 게시글을 작성하는 메소드
 	 */
