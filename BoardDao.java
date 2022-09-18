@@ -151,36 +151,42 @@ public class BoardDao {
 		PreparedStatement pstmt = null;
 		ResultSet rset = null;
 		Member m = null;
-		
 
-		String sql = "SELECT USERID, USERPWD " + 
-					 "FROM MEMBER " +  
-					 "WHERE USERID = ? AND USERPWD = ? ";
+		String sql = "SELECT USERID, USERPWD " + "FROM MEMBER " + "WHERE USERID = ? AND USERPWD = ? ";
 
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1,userId);
-			pstmt.setString(2,userPwd);
-			
+			pstmt.setString(1, userId);
+			pstmt.setString(2, userPwd);
+
 			rset = pstmt.executeQuery();
-			
+
 			if (rset.next()) {
 				m = new Member();
 				m.setUserId(rset.getString("USERID"));
 				m.setUserPwd(rset.getString("USERPWD"));
-				
-			if (rset.getString(1).equals(userId) && (rset.getString(2).equals(userPwd))) 
-				result = 1;
 
-			 else if (rset.getString(1).equals(userId) && !(rset.getString(2).equals(userPwd))) 
+				if (rset.getString("USERID").equals("admin")) {
+					
+					if (rset.getString(1).equals(userId) && (rset.getString(2).equals(userPwd)))
+						result = 1;
 
-				result = 0;
-			
-			else if (!(rset.getString(1).equals(userId)))
+					else if (rset.getString(1).equals(userId) && !(rset.getString(2).equals(userPwd)))
 
-				result = -1;
+						result = 0;
 
+				} else {
+					if (rset.getString(1).equals(userId) && (rset.getString(2).equals(userPwd)))
+						result = 2;
+					else if (rset.getString(1).equals(userId) && !(rset.getString(2).equals(userPwd)))
+
+						result = 0;
+				}
 			}
+
+			/// else if (!(rset.getString(1).equals(userId)))
+
+			// result = -1;
 
 		} catch (SQLException e) {
 
